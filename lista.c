@@ -32,17 +32,17 @@ void char_record(struct player *, int n);
 void npc_record(struct npc *, int np);
 void list_char(struct player *, int n);
 void list_npc(struct npc *, int np);
-void select_char(struct player *, int n, int select);
-void select_enemy(struct npc *, int np, int selectm);
+void select_char(struct player *, int n, int *selectp);
+void select_enemy(struct npc *, int np, int *selectm);
 int delete_char(struct player *, int n); 
 int delete_npc(struct npc*, int np);
 int menu_select(void); 
 int class_select(void);
-void battle();
+void battle(struct player *, struct npc *, int selectp, int selectm);
 
 void main(void)
 {
-	int choice, n=0, np=0, select, selectm;
+	int choice, n=0, np=0, selectp, selectm;
 
 	struct player clients[MAX_CLIENTS];
 	struct npc monster[MAX_NPC];
@@ -51,9 +51,9 @@ void main(void)
 		choice=menu_select();
 		switch(choice) {
 				case 1: system("clear");
-				select_char(clients, n, select);
-				select_enemy(monster, np, selectm);
-				battle(clients, select, monster, selectm);	
+				select_char(clients, n, &selectp);
+				select_enemy(monster, np, &selectm);
+				battle(clients, monster, selectp, selectm);	
 				break;
 			case 2: if(n < MAX_CLIENTS) {
 					char_record(clients, n);
@@ -300,29 +300,43 @@ void list_npc(struct npc monster[], int np)
 	}
 }
 
-void select_char(struct player clients[], int n, int select)
+void select_char(struct player clients[], int n, int *selectp)
 {
 	int i;
 	printf("\nDigite o numero do personagem que deseja usar\n\n");
 	for(i=0;i<n;i++){
                 printf("Personagem %d: %s\n", i, clients[i].name);
-		scanf("%d", &select);	
 	}
-	printf("\nO personagem escolhido foi o %s\n", clients[select].name);
+	scanf("%d", selectp);	
+	printf("\nO personagem escolhido foi o %s\n", clients[*selectp].name);
 }
 
-void select_enemy(struct npc monster[], int np, int selectm)
+void select_enemy(struct npc monster[], int np, int *selectm)
 {
 	int i;
 	printf("\nDigite o numero do NPC que deseja lutar\n\n");
 	for(int i=0; i<np; i++){
 		printf("Npc %d: %s\n", i, monster[i].name);
-		scanf("%d", &selectm);
-	}
-	printf("\nO Npc escolhido foi o %s\n", monster[selectm].name);
+	}	
+	scanf("%d", selectm);
+	printf("\nO Npc escolhido foi o %s\n", monster[*selectm].name);
 }
 
-void battle(struct player clients[], struct npc monster[], int select, int selectm)
+void battle(struct player clients[], struct npc monster[], int choicep, int choicem)
 {
-	printf("Sua escolha: %s", clients[select].name);
+	int a;
+	printf("\nA batalha vai começar!\n");
+	do {
+		printf("\nDigite 1 para atacar e 2 para fugir da luta\n");
+		scanf("%d", &a);
+			if(a=1){
+				monster[choicem].hp = monster[choicem].hp -20;
+				printf("Você causou 20 de dano no seu oponente e restou %d\n", monster[choicem].hp);
+				clients[choicep].hp = clients[choicep].hp - 50;
+				printf("Você recebeu 50 de dano do seu oponente e restou %d\n", clients[choicep].hp);
+			} else {
+				printf("Você fugiu da luta\n");
+			}
+	} while(clients[choicep].hp>0);
+	printf("%s foi derrotado por %s!\n", clients[choicep].name, monster[choicem].name);
 }
