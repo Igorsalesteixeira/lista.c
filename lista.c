@@ -190,6 +190,8 @@ void initialize(struct player *l, int c	) {
 void char_record(struct player clients[], int n)
 {
 	struct player *l;
+	char tempchar[20];
+	int aux;
 	l = (struct player *)malloc(sizeof(struct player));
 	if (!l) {
 		printf("Não conseguiu alocar a memória.\n");
@@ -198,6 +200,7 @@ void char_record(struct player clients[], int n)
 
 	printf("Digite o nome: ");
 	fgets(l->name, sizeof(l->name), stdin);
+	l->name[strlen(l->name)-1] = '\0';
 
 	int c = class_select();
 	initialize(l, c);
@@ -209,6 +212,8 @@ void char_record(struct player clients[], int n)
 void npc_record(struct npc monster[], int np)
 {
 	struct npc *m;
+	char tempchar[20];
+	int aux;
 	m = (struct npc *)malloc(sizeof(struct npc));
 	if (!m) {
 		printf("Não conseguiu alocar a memória.\n");
@@ -217,7 +222,8 @@ void npc_record(struct npc monster[], int np)
 	
 	printf("Digite o nome: ");
 	fgets(m->name, sizeof(m->name), stdin);
-
+	m->name[strlen(m->name)-1] = '\0';
+			
 	initialize_npc(m);
 
 	monster[np] = *m;
@@ -324,19 +330,21 @@ void select_enemy(struct npc monster[], int np, int *selectm)
 
 void battle(struct player clients[], struct npc monster[], int choicep, int choicem)
 {
-	int a;
+	int a, attack;
 	printf("\nA batalha vai começar!\n");
 	do {
 		printf("\nDigite 1 para atacar e 2 para fugir da luta\n");
 		scanf("%d", &a);
-			if(a=1){
-				monster[choicem].hp = monster[choicem].hp -20;
-				printf("Você causou 20 de dano no seu oponente e restou %d\n", monster[choicem].hp);
-				clients[choicep].hp = clients[choicep].hp - 50;
-				printf("Você recebeu 50 de dano do seu oponente e restou %d\n", clients[choicep].hp);
-			} else {
-				printf("Você fugiu da luta\n");
-			}
+		if(a==1){
+			monster[choicem].hp = monster[choicem].hp -20;
+ 			printf("Você causou 20 de dano no seu oponente e restou %d\n", monster[choicem].hp);
+			clients[choicep].hp = clients[choicep].hp - 50;
+ 			printf("Você recebeu 50 de dano do seu oponente e restou %d\n", clients[choicep].hp);
+		}
+		if(a==2){
+			break;
+		}
 	} while(clients[choicep].hp>0);
-	printf("%s foi derrotado por %s!\n", clients[choicep].name, monster[choicem].name);
+	printf("\nVocê fugiu da luta!\n");
+	printf("\n%s foi derrotado por %s!\n", clients[choicep].name, monster[choicem].name);
 }
