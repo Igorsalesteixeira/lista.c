@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAX_CLIENTS 10
 #define MAX_NPC 100
@@ -330,21 +331,48 @@ void select_enemy(struct npc monster[], int np, int *selectm)
 
 void battle(struct player clients[], struct npc monster[], int choicep, int choicem)
 {
-	int a, attack;
+	int a, attack,ratep,ratem;
 	printf("\nA batalha vai começar!\n");
 	do {
 		printf("\nDigite 1 para atacar e 2 para fugir da luta\n");
 		scanf("%d", &a);
 		if(a==1){
-			monster[choicem].hp = monster[choicem].hp -20;
- 			printf("Você causou 20 de dano no seu oponente e restou %d\n", monster[choicem].hp);
-			clients[choicep].hp = clients[choicep].hp - 50;
- 			printf("Você recebeu 50 de dano do seu oponente e restou %d\n", clients[choicep].hp);
+			srand( (unsigned)time(NULL) );
+        		int rate;
+	 		ratep = rand() % 2;
+			if(ratep == 1){
+				printf("\nVocê conseguiu atacar !\n");
+				monster[choicem].hp = monster[choicem].hp -20;
+ 				printf("Você causou 20 de dano no seu oponente e restou %d\n", monster[choicem].hp);
+			} else {
+				printf("\nVocê errou o ataque!\n");
+				// Ataque do monstro//
+			}	ratem = rand() % 2;
+			if(ratem == 1){
+				clients[choicep].hp = clients[choicep].hp - 50;
+ 				printf("Você recebeu 50 de dano do seu oponente e restou %d\n", clients[choicep].hp);
+			} else {
+				printf("\nO oponente errou o ataque!\n");
+			} 	
 		}
 		if(a==2){
+			printf("\nVocê fugiu da luta!\n");
 			break;
 		}
 	} while(clients[choicep].hp>0);
-	printf("\nVocê fugiu da luta!\n");
 	printf("\n%s foi derrotado por %s!\n", clients[choicep].name, monster[choicem].name);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
